@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CSS filter</title>
+    <script src="vue.js"></script>
+    <style>
+    :root {
+        --base: url('http://chongqing.sinaimg.cn/20170225_yhscdh/timg.jpg');
+    }
+    
+    .pencil-effect {
+        background-image: var(--base);
+        background-position: center;
+        height: 500px;
+    }
+    
+    @supports (filter: invert(1)) and (background-blend-mode: difference) {
+        .pencil-effect {
+            background-image: var(--base);
+            background-blend-mode: difference;
+            background-repeat: no-repeat;
+        }
+    }
+    
+    .main {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        margin: 0 auto;
+    }
+    
+    .main li span {
+        width: 72px;
+        display: inline-block;
+    }
+    </style>
+</head>
+
+<body>
+    <section id="demo">
+        <div class="pencil-effect" id="targetImg" v-bind:style="filterEffect">
+        </div>
+        <ul class="main">
+            <li v-for="effect in filter">
+                <span>{{effect.name}}</span>
+                <input type="range" min="0" :max="effect.max" :step="effect.max/100" v-model="effect.value"> {{effect.value}}
+            </li>
+        </ul>
+    </section>
+    <script>
+    var app = new Vue({
+        el: '#demo',
+        data: {
+            filter: [
+            	{ name: '亮度', effect: 'brightness', value: 1, max: 5}, 
+            	{ name: '反色',effect: 'invert',value: 0,max: 1}, 
+            	{ name: '灰度',effect: 'grayscale',value: 0,max: 1}, 
+            	{ name: '褐色',effect: 'sepia',value: 0, max: 1}, 
+            	{ name: '饱和度',effect: 'saturate',value: 1,max: 10}, 
+            	{ name: '色相反转',effect: 'hue-rotate',value: 0,max: 360 }, 
+            	{ name: '对比度',effect: 'contrast', value: 1,max: 1 },
+            	{ name: '高斯模糊', effect: 'blur',value: 0,max: 10}
+            ]
+        },
+        computed: {
+            filterEffect: function() {
+                var filter = this.filter;
+                return {
+                    filter: filter.map(function(val, index) {
+                        var effect = val.effect;
+                        var value = val.value;
+                        if (index == 5) {
+                            value += 'deg'
+                        }
+                        if (index == 7) {
+                            value += 'px'
+                        }
+                        return effect + "(" + value + ")"
+                    }).join(" ")
+                }
+            }
+        }
+    })
+    </script>
+</body>
+
+</html>
